@@ -285,34 +285,7 @@ def _post_pred_generate(bottom_node, samples=500, data=None, append_data=False):
     return datasets
 
 def post_pred_gen(model, groupby=None, samples=300, append_data=False, progress_bar=True):
-      """Run posterior predictive check on a model.
-
-    :Arguments:
-        model : kabuki.Hierarchical
-            Kabuki model over which to compute the ppc on.
-
-    :Optional:
-        samples : int
-            How many samples to generate for each node.
-        groupby : list
-            Alternative grouping of the data. If not supplied, uses splitting
-            of the model (as provided by depends_on).
-        append_data : bool (default=False)
-            Whether to append the observed data of each node to the replicatons.
-        progress_bar : bool (default=True)
-            Display progress bar
-
-    :Returns:
-        Hierarchical pandas.DataFrame with multiple sampled RT data sets.
-        1st level: wfpt node
-        2nd level: posterior predictive sample
-        3rd level: original data index
-
-    :See also:
-        post_pred_stats
-    """
-    results = {}
-    
+    results = {}    
     # Progress bar
     if progress_bar:
         n_iter = len(model.get_observeds())
