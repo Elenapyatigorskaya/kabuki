@@ -284,8 +284,8 @@ def _post_pred_generate(bottom_node, samples=500, data=None, append_data=False):
 
     return datasets
 
-def post_pred_gen(model, groupby=None, samples=500, append_data=False, progress_bar=True):
-    """Run posterior predictive check on a model.
+def post_pred_gen(model, groupby=None, samples=300, append_data=False, progress_bar=True):
+      """Run posterior predictive check on a model.
 
     :Arguments:
         model : kabuki.Hierarchical
@@ -312,7 +312,7 @@ def post_pred_gen(model, groupby=None, samples=500, append_data=False, progress_
         post_pred_stats
     """
     results = {}
-
+    
     # Progress bar
     if progress_bar:
         n_iter = len(model.get_observeds())
@@ -320,32 +320,31 @@ def post_pred_gen(model, groupby=None, samples=500, append_data=False, progress_
         bar_iter = 0
     else:
         print("Sampling...")
-
     if groupby is None:
-        iter_data = ((name, model.data.iloc[obs['node'].value.index]) for name, obs in model.iter_observeds())
+        iter_data = ((name, model.data.ix[obs['node'].value.index]) for name, obs in model.iter_observeds())
     else:
         iter_data = model.data.groupby(groupby)
-
     for name, data in iter_data:
         node = model.get_data_nodes(data.index)
-
+       
         if progress_bar:
             bar_iter += 1
             bar.update(bar_iter)
-
         if node is None or not hasattr(node, 'random'):
             continue # Skip
-
-        ##############################
-        # Sample and generate stats
+        # change here
+        updated_name = ''
+        name = updated_name.join(str(name))
+       
         datasets = _post_pred_generate(node, samples=samples, data=data, append_data=append_data)
         results[name] = pd.concat(datasets, names=['sample'], keys=list(range(len(datasets))))
-
+   
     if progress_bar:
         bar_iter += 1
         bar.update(bar_iter)
-
-    return pd.concat(results, names=['node'])
+        
+    return pd.concat(results, names=['node'])  
+    
 
 
 def post_pred_stats(data, sim_datasets, stats=None, plot=False, bins=100, evals=None, call_compare=True):
